@@ -97,6 +97,7 @@ public class PMDAnalyzer {
         System.out.println("Step 2 Execution Completed!");
         System.out.println("Step 2 Execution Time: " + step2Time + " ms");
         JSONObject jsonObject = new JSONObject(pmdResult);
+        System.out.println("Final JSON Object:");
         System.out.println(jsonObject);
     }
 
