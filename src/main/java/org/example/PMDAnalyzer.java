@@ -19,17 +19,27 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class PmdCollector {
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Logger;
+import java.util.logging.Level;
+
+public class PMDAnalyzer {
     public static void main(String[] args) throws Exception {
-        if (args.length != 1) {
-            System.out.println("Usage: TestCoverageAnalyzer <git_repo_directory>");
+        Logger rootLogger = Logger.getLogger("");
+        rootLogger.setLevel(Level.WARNING);
+        ConsoleHandler consoleHandler = new ConsoleHandler();
+        consoleHandler.setLevel(Level.SEVERE);
+        rootLogger.addHandler(consoleHandler);
+
+        if (args.length == 0) {
+            System.out.println("Usage: PMDAnalyzer <git_repo_directory>");
             return;
         }
 
         String gitRepoUrl = args[0];
-        String destinationDirectory = "pmd-analyzer-projects";
+        String destinationDirectory = args.length > 1 ? args[1] : "pmd-analyzer-projects";
 
-        String repoName = getRepositoryName(gitRepoUrl).replace(".git","");
+        String repoName = getRepositoryName(gitRepoUrl).replace(".git", "");
         File gitRepoDirectory = new File(destinationDirectory, repoName);
 
         if (!gitRepoDirectory.exists()) {
@@ -71,8 +81,8 @@ public class PmdCollector {
                 );
             }
         }
-        pmdRepositoryStats.setAvg_of_num_java_files(totalNumberOfJavaFiles/Double.valueOf(commits.size()));
-        pmdRepositoryStats.setAvg_of_num_warnings(totalNumberOfWarnings/Double.valueOf(commits.size()));
+        pmdRepositoryStats.setAvg_of_num_java_files(totalNumberOfJavaFiles / Double.valueOf(commits.size()));
+        pmdRepositoryStats.setAvg_of_num_warnings(totalNumberOfWarnings / Double.valueOf(commits.size()));
 
         pmdResult.setStat_of_repository(pmdRepositoryStats);
         JSONObject jsonObject = new JSONObject(pmdResult);
@@ -157,7 +167,7 @@ public class PmdCollector {
                 configuration.addRuleSet("rulesets/java/quickstart.xml");
             }
             // configuration.setInputPaths(gitRepositoryLocation + "/src/main/java");
-            for (String javaFile: javaFilesAgainstCommit){
+            for (String javaFile : javaFilesAgainstCommit) {
                 if (Files.exists(Path.of(javaFile))) {
                     configuration.addInputPath(javaFile);
                 }
