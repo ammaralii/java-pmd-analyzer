@@ -94,7 +94,43 @@ To run the project locally, follow these steps:
 
 ## Output
 
-The tool will produce a JSON file output.
+The tool will produce a JSON file output similar to this:
+```json
+{
+  "location": "/app/pmd-analyzer-projects/interview-preparation-kit",
+  "stat_of_repository": {
+    "number_of_commits": 112,
+    "avg_of_num_warnings": 185.54,
+    "avg_of_num_java_files": 70.73
+  },
+  "stat_of_warnings": {
+    "UseEqualsToCompareStrings": 136,
+    "UseUtilityClass": 3753,
+    "LooseCoupling": 332,
+    "LocalVariableNamingConventions": 676,
+    "UnusedPrivateMethod": 213,
+    "FormalParameterNamingConventions": 270,
+    "UnnecessaryLocalBeforeReturn": 61,
+    "UnnecessaryFullyQualifiedName": 62,
+    "ForLoopCanBeForeach": 510,
+    "CloseResource": 467,
+    "SwitchStmtsShouldHaveDefault": 82,
+    "DoNotExtendJavaLangThrowable": 78,
+    "UselessParentheses": 728,
+    "ControlStatementBraces": 1496,
+    "MethodNamingConventions": 10330,
+    "SimplifyBooleanReturns": 93,
+    "AvoidBranchingStatementAsLastInLoop": 62,
+    "LiteralsFirstInComparisons": 238,
+    "OneDeclarationPerLine": 515,
+    "CompareObjectsWithEquals": 136,
+    "UseCollectionIsEmpty": 122,
+    "UnusedLocalVariable": 34,
+    "UncommentedEmptyConstructor": 97,
+    "UnnecessaryImport": 289
+  }
+}
+```
 
 ## Performance
 
