@@ -1,0 +1,7 @@
+.idea
+*.iml
+target/*
+exec-data/
+pmd-analyzer-projects/
+*.DS_STORE
+*.log
