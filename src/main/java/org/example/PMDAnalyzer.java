@@ -1,6 +1,9 @@
 package org.example;
 
-import net.sourceforge.pmd.*;
+import net.sourceforge.pmd.PMDConfiguration;
+import net.sourceforge.pmd.PmdAnalysis;
+import net.sourceforge.pmd.Report;
+import net.sourceforge.pmd.RuleViolation;
 import net.sourceforge.pmd.lang.LanguageRegistry;
 import org.eclipse.jgit.api.Git;
 import org.example.dto.PMDRepositoryStats;
@@ -18,18 +21,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import java.util.logging.ConsoleHandler;
-import java.util.logging.Logger;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class PMDAnalyzer {
     public static void main(String[] args) throws Exception {
-        Logger rootLogger = Logger.getLogger("");
-        rootLogger.setLevel(Level.WARNING);
-        ConsoleHandler consoleHandler = new ConsoleHandler();
-        consoleHandler.setLevel(Level.SEVERE);
-        rootLogger.addHandler(consoleHandler);
+        Logger pmdLogger = Logger.getLogger("net.sourceforge.pmd");
+        pmdLogger.setLevel(Level.SEVERE);
 
         if (args.length == 0) {
             System.out.println("Usage: PMDAnalyzer <git_repo_directory>");
@@ -45,24 +43,32 @@ public class PMDAnalyzer {
         if (!gitRepoDirectory.exists()) {
             // Clone the repository if it's public
             // Step 0: (Clone repository as not exists)
+            System.out.println("Step 0: (Clone repository as not exists) Execution Started");
             long step0StartTime = System.nanoTime();
             Git.cloneRepository().setURI(gitRepoUrl).setDirectory(gitRepoDirectory).call();
             System.out.println("Repository cloned from " + gitRepoUrl + " to " + gitRepoDirectory.getAbsolutePath());
             long step0EndTime = System.nanoTime();
             long step0Time = (step0EndTime - step0StartTime) / 1_000_000; // in milliseconds
-            System.out.println("Step 0: (Clone repository as not exists) Execution Time: " + step0Time + " ms");
+            System.out.println("Step 0 Execution Completed!");
+            System.out.println("Step 0 Execution Time: " + step0Time + " ms");
         }
 
         createDirectoryIfNotExists(gitRepoDirectory + "/pmd-stats-on-commit");
 
         Git git = Git.open(gitRepoDirectory);
-        git.getRepository().resolve("abc");
 
-        // Get the list of commits in the git repository.
+        // Step 1: (Get the list of commits in the git repository)
+        System.out.println("Step 1: (Get the list of commits in the git repository)");
+        long step1StartTime = System.nanoTime();
         List<String> commits = getCommits(gitRepoDirectory);
+        long step1EndTime = System.nanoTime();
+        long step1Time = (step1EndTime - step1StartTime) / 1_000_000; // in milliseconds
+        System.out.println("Step 1 Execution Completed!");
+        System.out.println("Step 1 Execution Time: " + step1Time + " ms");
 
-        // Collect static analysis results for each commit.
-//        Map<String, Integer> statOfWarnings = new HashMap<>();
+        // Step 2: (Collect static analysis results for each commit)
+        System.out.println("Step 2: (Collect static analysis results for each commit)");
+        long step2StartTime = System.nanoTime();
         PMDResult pmdResult = new PMDResult(gitRepoDirectory.getAbsolutePath());
         PMDRepositoryStats pmdRepositoryStats = new PMDRepositoryStats();
         pmdRepositoryStats.setNumber_of_commits(commits.size());
@@ -70,6 +76,7 @@ public class PMDAnalyzer {
         Integer totalNumberOfJavaFiles = 0;
         Integer totalNumberOfWarnings = 0;
         for (String commit : commits) {
+            System.out.println("Analysis started on commit: " + commit);
             Map<String, Object> results = collectStaticAnalysisResults(gitRepoDirectory.getPath(), commit, null);
             Integer numOfJavaFiles = (Integer) results.get("num_java_files");
             totalNumberOfJavaFiles += numOfJavaFiles;
@@ -81,10 +88,14 @@ public class PMDAnalyzer {
                 );
             }
         }
-        pmdRepositoryStats.setAvg_of_num_java_files(totalNumberOfJavaFiles / Double.valueOf(commits.size()));
-        pmdRepositoryStats.setAvg_of_num_warnings(totalNumberOfWarnings / Double.valueOf(commits.size()));
+        pmdRepositoryStats.setAvg_of_num_java_files(totalNumberOfJavaFiles / (double) commits.size());
+        pmdRepositoryStats.setAvg_of_num_warnings(totalNumberOfWarnings / (double) commits.size());
 
         pmdResult.setStat_of_repository(pmdRepositoryStats);
+        long step2EndTime = System.nanoTime();
+        long step2Time = (step2EndTime - step2StartTime) / 1_000_000; // in milliseconds
+        System.out.println("Step 2 Execution Completed!");
+        System.out.println("Step 2 Execution Time: " + step2Time + " ms");
         JSONObject jsonObject = new JSONObject(pmdResult);
         System.out.println(jsonObject);
     }
@@ -156,7 +167,8 @@ public class PMDAnalyzer {
         List<String> javaFilesAgainstCommit = getJavaFiles(gitRepositoryLocation, commit);
         Map<String, Object> result = new HashMap<>();
         result.put("num_java_files", javaFilesAgainstCommit.size());
-        if (javaFilesAgainstCommit.size() > 0) {
+        if (!javaFilesAgainstCommit.isEmpty()) {
+            System.out.println("Java files found in commit: " + javaFilesAgainstCommit.size());
 
             // Create a PMD configuration.
             PMDConfiguration configuration = new PMDConfiguration();
@@ -168,14 +180,15 @@ public class PMDAnalyzer {
             }
             // configuration.setInputPaths(gitRepositoryLocation + "/src/main/java");
             for (String javaFile : javaFilesAgainstCommit) {
-                if (Files.exists(Path.of(javaFile))) {
-                    configuration.addInputPath(javaFile);
+                Path inputPath = Path.of(javaFile);
+                if (Files.exists(inputPath)) {
+                    configuration.addInputPath(inputPath);
                 }
             }
             configuration.setDefaultLanguageVersion(LanguageRegistry.findLanguageByTerseName("java").getVersion("11"));
             configuration.prependAuxClasspath(gitRepositoryLocation + "/target/classes");
             configuration.setReportFormat("json");
-            configuration.setReportFile(gitRepositoryLocation + "/pmd-stats-on-commit/" + commit + ".json");
+            configuration.setReportFile(Path.of(gitRepositoryLocation + "/pmd-stats-on-commit/" + commit + ".json"));
 
             PmdAnalysis pmdAnalysis = PmdAnalysis.create(configuration);
 
@@ -192,6 +205,9 @@ public class PMDAnalyzer {
                     .sum()
             );
             result.put("stat_of_warnings", statOfWarnings);
+            System.out.println("PMD analysis commit file Location: " + gitRepositoryLocation + "/pmd-stats-on-commit/" + commit + ".json");
+        } else {
+            System.out.println("No Java files found in commit");
         }
 
         return result;
