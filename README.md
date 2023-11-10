@@ -134,11 +134,11 @@ The tool will produce a JSON file output similar to this:
 
 ## Performance
 
-The tool is designed to meet the performance requirements outlined in Requirement R10. It should be capable of processing
-a repository with 1,000 Java files within 1000 seconds.
+The tool is designed to meet the performance requirements outlined in Requirement R10. It should be capable of 
+processing a repository with 1,000 commits within 1000s.
 
-I made it superfast as it'll process 1 java file in 100-150 milliseconds. Here is the output where I processed **7922**
-java files in **61.231** seconds
+I tried my best to meet this requirement and processed 1 commit in 200-800 milliseconds. Here is the output where 
+I processed **112** commits in **61.231** seconds
 ```
 Step 1: (Get the list of commits in the git repository)
 Step 1 Execution Completed!
