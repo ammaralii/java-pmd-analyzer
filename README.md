@@ -88,8 +88,17 @@ To run the project locally, follow these steps:
    docker build -t pmd-analyzer:latest .
     ```
 3. Run the application:
+    
+    `docker run --name <container_name> <image_name>:latest java -jar /app/pmd-analyzer.jar <REPO_URL>`
     ```sh
-   docker run pmd-analyzer:latest java -jar /app/pmd-analyzer.jar https://github.com/ammaralii/interview-preparation-kit.git
+   docker run --name pmd-analyzer pmd-analyzer:latest java -jar /app/pmd-analyzer.jar https://github.com/ammaralii/interview-preparation-kit.git
+    ```
+   
+4. If you want to copy JSON files having commit analysis details, run this(It will copy stopped container files to host path):
+   
+    `mkdir -p <host_path> && docker cp <container_name_or_id>:<source_path> <host_path>`
+    ```sh
+    mkdir -p $HOME/pmd-analyzer-projects/interview-preparation-kit && docker cp pmd-analyzer:/app/pmd-analyzer-projects/interview-preparation-kit/pmd-stats-on-commit $HOME/pmd-analyzer-projects/interview-preparation-kit/pmd-stats-on-commit
     ```
 
 ## Output

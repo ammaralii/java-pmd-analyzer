@@ -76,6 +76,7 @@ public class PMDAnalyzer {
         Integer totalNumberOfJavaFiles = 0;
         Integer totalNumberOfWarnings = 0;
         for (String commit : commits) {
+            System.out.println("--------------------------------------------------------------------");
             System.out.println("Analysis started on commit: " + commit);
             Map<String, Object> results = collectStaticAnalysisResults(gitRepoDirectory.getPath(), commit, null);
             Integer numOfJavaFiles = (Integer) results.get("num_java_files");
