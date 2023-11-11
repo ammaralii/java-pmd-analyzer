@@ -89,7 +89,7 @@ To run the project locally, follow these steps:
     ```
 3. Run the application:
     ```sh
-   docker run pmd-analyzer:latest
+   docker run pmd-analyzer:latest java -jar /app/pmd-analyzer.jar https://github.com/ammaralii/interview-preparation-kit.git
     ```
 
 ## Output

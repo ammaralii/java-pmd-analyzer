@@ -8,4 +8,4 @@ WORKDIR /app
 COPY pmd-analyzer.jar /app
 
 # Specify the command to run your application
-CMD ["java", "-jar", "/app/pmd-analyzer.jar", "https://github.com/ammaralii/interview-preparation-kit.git"]
+CMD ["java", "-jar", "/app/pmd-analyzer.jar"]
