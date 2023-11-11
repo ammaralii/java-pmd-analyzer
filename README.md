@@ -173,9 +173,6 @@ I processed **112** commits in **50** seconds approx
 2023-11-11 12:31:38 --------------------------------------------------------------------
 2023-11-11 12:31:38 Analysis started on commit: f50e00acf42e643b3bdde0e4c968d114922eca3b
 2023-11-11 12:31:38 No Java files found in commit
-2023-11-11 12:31:26 SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
-2023-11-11 12:31:26 SLF4J: Defaulting to no-operation (NOP) logger implementation
-2023-11-11 12:31:26 SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
 2023-11-11 12:31:38 --------------------------------------------------------------------
 2023-11-11 12:31:38 Analysis started on commit: 29a893f1aa5bd09dec077f4784adbf3b761e5bbb
 2023-11-11 12:31:38 No Java files found in commit
